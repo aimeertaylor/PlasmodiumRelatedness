@@ -1,5 +1,6 @@
 ##########################################################
 # Script to generate CIs around a subset of 100 rhats
+# Includes var based on normal approximation (invalid at boundary)
 ##########################################################
 
 rm(list = ls())
