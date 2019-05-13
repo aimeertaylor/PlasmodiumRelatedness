@@ -77,7 +77,7 @@ names(cols) <- Z
 
 # HMM
 plot(NULL, bty = 'n', 
-     ylim = c(0.05, pmax(max(tablebothsorted), 0.23)),
+     ylim = c(0.05, pmax(max(tablebothsorted), 0.25)),
      xlim = range(ms), xaxt = 'n', panel.first = grid(),
      ylab = expression('Root mean squared error given data generating'~italic(r)==0.5), 
      main = '', las = 2,
@@ -85,7 +85,8 @@ plot(NULL, bty = 'n',
 axis(side = 1, at = ms)
 abline(h = 0.1, lty = 'dashed')
 
-legend('top', inset = 0, legend = format(Z, digits = 2, drop0trailing = F), 
+legend(y = 0.222, x = 384, 
+       inset = 0, legend = format(Z, digits = 2, drop0trailing = F), 
        col = cols,
        pch = 16, bty = 'n', title = expression(bar(italic(K))~"'"[italic(m)[cum]]))
 
@@ -122,7 +123,7 @@ cols = sapply(cols, adjustcolor, alpha.f = 0.65)
 symbols(y = Y, x = X, las = 1, 
         circles = sqrt(m_vector[names_order_vector]/pi), # Area scales with m
         inches = 0.15, 
-        ylim = c(0.05, pmax(max(tablebothsorted), 0.23)), 
+        ylim = c(0.05, pmax(max(tablebothsorted), 0.25)), 
         xlab = expression('Number of markers times average effective cardinality, '~italic(m)%*%bar(italic(K))~"'"[italic(m)[cum]]), 
         ylab = expression('Root mean squared error given data generating'~italic(r)==0.5), 
         bty ='n', panel.first = grid(), 
@@ -135,11 +136,11 @@ legend(y = 0.222,
        title = expression(bar(italic(K))~"'"[italic(m)[cum]]), 
        legend = format(sort(Keff_ms)[seq(1,length(Keff_ms),length.out = 10)], digits = 2, drop0trailing = F))
 # Legend for symbol size
-symbols(y = seq(max(Y), 0.155, length.out = length(ms)),
+symbols(y = seq(0.206, 0.145, length.out = length(ms)),
         x = rep(max(X),length(ms)), bg = 'lightgray', 
         circles = sqrt(ms/pi), 
         add = T, inches = 0.155) # Area scales with m
-text(y = seq(max(Y), 0.15, length.out = length(ms)),
+text(y = seq(0.206, 0.145, length.out = length(ms)),
      x = rep(max(X),length(ms)),labels = ms, pos = 4, offset = 1.1)
 text(y = max(Y)+0.005, pos = 4, x = max(X), labels = expression(italic(m)))
 abline(h = 0.1, lty = 'dashed')
