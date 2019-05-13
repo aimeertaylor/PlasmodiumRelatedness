@@ -12,7 +12,6 @@
 ## Set up
 rm(list = ls())
 set.seed(1)
-library(ggplot2)
 library(dplyr)
 library(Rcpp)
 library(doParallel)
@@ -28,7 +27,7 @@ set.seed(1) # for reproducibility
 nrepeats <- 1000 # number of repeats 
 kfixed <- 12 
 rfixed <- 0.5 
-littleks <- c(1,5,10,50,1e3)
+littleks <- c(1,10,100)
 
 ## Mechanism to generate Ys given fs, r, epsilon
 simulate_Ys_iid <- function(frequencies, r, epsilon){
@@ -150,11 +149,11 @@ system.time(
     }
   }
 )
-save(tables_many_repeats_m_iid,
-     tables_many_repeats_m_hmm,
-     tables_many_repeats_m_dataset,
-     tables_many_repeats_m_thetas,
-     file = '../RData/tables_many_repeats_m.RData' )
+# save(tables_many_repeats_m_iid,
+#      tables_many_repeats_m_hmm,
+#      tables_many_repeats_m_dataset,
+#      tables_many_repeats_m_thetas,
+#      file = '../RData/tables_many_repeats_m.RData' )
 load('../RData/tables_many_repeats_m.RData')
 # show some of the results
 tables_many_repeats_m_iid[,,1]
@@ -227,8 +226,9 @@ tables_many_repeats_m_hmm[,,1]
 
 #====================================================
 # Different (little) ks and ms given fixed r = 0.5 
-# Use the same data set as in for 
+# Use the same data set as in for aboth
 #====================================================
+load('../RData/tables_many_repeats_m.RData')
 fs_strategy <- list("Proportional to MAF" = maf)
 tables_many_repeats_k_hmm <- array(dim = c(length(samplesizes), length(littleks), length(fs_strategy)),
                                    dimnames = list(samplesizes, littleks, names(fs_strategy)))
@@ -254,7 +254,7 @@ system.time(
     }
   }
 )
-save(tables_many_repeats_k_iid, tables_many_repeats_k_hmm, file = '~/Dropbox/IBD_IBS/RData/tables_many_repeats_littlek.RData' )
+save(tables_many_repeats_k_iid, tables_many_repeats_k_hmm, file = '../RData/tables_many_repeats_littlek.RData' )
 load('../RData/tables_many_repeats_littlek.RData')
 # show some of the results
 cbind(tables_many_repeats_k_iid[,,1], tables_many_repeats_k_hmm[,,1])
