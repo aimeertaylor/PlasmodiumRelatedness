@@ -8,7 +8,7 @@ library(RColorBrewer) # For color mapper functions
 par_df <- par(no.readonly = T)
 PDF = T
 if(PDF){pdf(file = '../Plots/Plot_graphs_coverage.pdf', 
-            height = 8, width = 7)}
+            height = 7, width = 7)}
 cov_cutoff = 0.95
 
 # Load data 
@@ -45,8 +45,8 @@ Plot_coverage = function(XLAB, LEG_title, HMM = F, INDEP = F){
   
   # Plot coverage
   for(j in 1:ncol(X0)){
-    if(INDEP){lines(y = X1[,j], x = Vs, col = cols_vs[j], ylog = T, pch = 20, type = 'b')}
-    if(HMM){lines(y = X0[,j], x = Vs, col = cols_vs[j], ylog = T, pch = 20, type = 'b')}
+    if(INDEP){lines(y = X1[,j], x = Vs, col = cols_vs[j], ylog = T, pch = 16, type = 'b')}
+    if(HMM){lines(y = X0[,j], x = Vs, col = cols_vs[j], ylog = T, pch = 16, type = 'b')}
   }
 }
 
@@ -55,15 +55,11 @@ Plot_coverage = function(XLAB, LEG_title, HMM = F, INDEP = F){
 # Big K: affect of alpha when variable r
 # Little difference so just use alpha 1 in ms
 #================================================
-Tables_len = list(hmm = tables_many_repeats_Kr_length_hmm[,,1],  
-                  iid = tables_many_repeats_Kr_length_iid[,,1])
 Tables_cov = list(hmm = tables_many_repeats_Kr_coverage_hmm[,,1], 
                   iid = tables_many_repeats_Kr_coverage_iid[,,1])
 Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(r)), HMM = T)
 Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(r)), INDEP = T)
 
-Tables_len = list(hmm = tables_many_repeats_Kr_length_hmm[,,2],  
-                  iid = tables_many_repeats_Kr_length_iid[,,2])
 Tables_cov = list(hmm = tables_many_repeats_Kr_coverage_hmm[,,2], 
                   iid = tables_many_repeats_Kr_coverage_iid[,,2])
 Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(r)), HMM = T)
@@ -73,15 +69,11 @@ Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(r)), I
 # Big K: affect of alpha when variable k
 # Little difference so just use alpha 1 in ms
 #================================================
-Tables_len = list(hmm = tables_many_repeats_Kk_length_hmm[,,1],  
-                  iid = tables_many_repeats_Kk_length_iid[,,1])
 Tables_cov = list(hmm = tables_many_repeats_Kk_coverage_hmm[,,1], 
                   iid = tables_many_repeats_Kk_coverage_iid[,,1])
 Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), HMM = T)
 Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), INDEP = T)
 
-Tables_len = list(hmm = tables_many_repeats_Kk_length_hmm[,,2],  
-                  iid = tables_many_repeats_Kk_length_iid[,,2])
 Tables_cov = list(hmm = tables_many_repeats_Kk_coverage_hmm[,,2], 
                   iid = tables_many_repeats_Kk_coverage_iid[,,2])
 Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), HMM = T)
@@ -91,15 +83,11 @@ Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), I
 #================================================
 # Big K: summary plots
 #================================================
-Tables_len = list(hmm = tables_many_repeats_Kr_length_hmm[,,1],  
-                  iid = tables_many_repeats_Kr_length_iid[,,1])
 Tables_cov = list(hmm = tables_many_repeats_Kr_coverage_hmm[,,1], 
                   iid = tables_many_repeats_Kr_coverage_iid[,,1])
 Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(r)), HMM = T)
 Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(r)), INDEP = T)
 
-Tables_len = list(hmm = tables_many_repeats_Kk_length_hmm[,,1],  
-                  iid = tables_many_repeats_Kk_length_iid[,,1])
 Tables_cov = list(hmm = tables_many_repeats_Kk_coverage_hmm[,,1], 
                   iid = tables_many_repeats_Kk_coverage_iid[,,1])
 Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), HMM = T)
@@ -107,31 +95,45 @@ Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), I
 
 
 #================================================
-# m: summary plots
+# m: summary plots (adapted for ms)
 #================================================
-Tables_len = list(hmm = tables_many_repeats_mr_length_hmm[,,'Proportional to MAF'],  
-                  iid = tables_many_repeats_mr_length_iid[,,'Proportional to MAF'])
+par(mfrow = c(1,1))
 Tables_cov = list(hmm = tables_many_repeats_mr_coverage_hmm[,,'Proportional to MAF'], 
                   iid = tables_many_repeats_mr_coverage_iid[,,'Proportional to MAF'])
+Vs = as.numeric(rownames(Tables_cov$iid)) # Xaxis vaiable
+vs = as.numeric(colnames(Tables_cov$iid)) # Yaxis variable
+cols_vs = rainbow(length(vs), end = 0.8); names(cols_vs) = vs # Variable
 Plot_coverage(XLAB = expression('Number of markers,'~italic(m)), 
               LEG_title = expression('Relatedness,'~italic(r)), HMM = T)
-Plot_coverage(XLAB = expression('Number of markers,'~italic(m)), 
-              LEG_title = expression('Relatedness,'~italic(r)), INDEP = T)
+for(j in 1:length(vs)){
+  lines(y = Tables_cov$iid[,j], x = as.numeric(rownames(Tables_cov$iid)), 
+        col = cols_vs[j], ylog = T, pch = 21, type = 'b', bg = 'white', lty = 'dashed')
+}
+legend(x = 288, y = 0.5, bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
+       legend = c('HMM', 'Independence model'), inset = 0.2)
 
-Tables_len = list(hmm = tables_many_repeats_mk_length_hmm[,,'Proportional to MAF'],  
-                  iid = tables_many_repeats_mk_length_iid[,,'Proportional to MAF'])
+
 Tables_cov = list(hmm = tables_many_repeats_mk_coverage_hmm[,,'Proportional to MAF'], 
                   iid = tables_many_repeats_mk_coverage_iid[,,'Proportional to MAF'])
+Vs = as.numeric(rownames(Tables_cov$iid)) # Xaxis vaiable
+vs = as.numeric(colnames(Tables_cov$iid)) # Yaxis variable
+cols_vs = rainbow(length(vs), end = 0.8); names(cols_vs) = vs # Variable
 Plot_coverage(XLAB = expression('Number of markers,'~italic(m)), 
               LEG_title = expression('Switch rate parameter,'~italic(k)), HMM = T)
-Plot_coverage(XLAB = expression('Number of markers,'~italic(m)), 
-              LEG_title = expression('Switch rate parameter,'~italic(k)), INDEP = T)
+
+for(j in 1:length(vs)){
+  lines(y = Tables_cov$iid[,j], x = as.numeric(rownames(Tables_cov$iid)), 
+        col = cols_vs[j], ylog = T, pch = 21, type = 'b', bg = 'white', lty = 'dashed')}
+legend(x = 288, y = 0.5, bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
+       legend = c('HMM', 'Independence model'), inset = 0.2)
+
 
 
 
 #################################################
 # CI length plots
 #################################################
+par(mfrow = c(2,2), family = 'serif')
 # Function to plot graphs
 Plot_CI_length = function(XLAB, LEG_title, HMM = F, INDEP = F){
   
@@ -156,8 +158,8 @@ Plot_CI_length = function(XLAB, LEG_title, HMM = F, INDEP = F){
   
   # Plot CI lengths
   for(j in 1:ncol(X0)){
-    if(INDEP){lines(y = X1[,j], x = Vs, col = cols_vs[j], ylog = T, pch = 20, type = 'b')}
-    if(HMM){lines(y = X0[,j], x = Vs, col = cols_vs[j], ylog = T, pch = 20, type = 'b')}
+    if(INDEP){lines(y = X1[,j], x = Vs, col = cols_vs[j], ylog = T, pch = 16, type = 'b')}
+    if(HMM){lines(y = X0[,j], x = Vs, col = cols_vs[j], ylog = T, pch = 16, type = 'b')}
   }
   
   # Add stars if coverage cutoff met
@@ -186,15 +188,11 @@ Plot_CI_length = function(XLAB, LEG_title, HMM = F, INDEP = F){
 #================================================
 Tables_len = list(hmm = tables_many_repeats_Kr_length_hmm[,,1],  
                   iid = tables_many_repeats_Kr_length_iid[,,1])
-Tables_cov = list(hmm = tables_many_repeats_Kr_coverage_hmm[,,1], 
-                  iid = tables_many_repeats_Kr_coverage_iid[,,1])
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(r)), HMM = T)
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(r)), INDEP = T)
 
 Tables_len = list(hmm = tables_many_repeats_Kr_length_hmm[,,2],  
                   iid = tables_many_repeats_Kr_length_iid[,,2])
-Tables_cov = list(hmm = tables_many_repeats_Kr_coverage_hmm[,,2], 
-                  iid = tables_many_repeats_Kr_coverage_iid[,,2])
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), HMM = T)
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), INDEP = T)
 
@@ -204,15 +202,11 @@ Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), 
 #================================================
 Tables_len = list(hmm = tables_many_repeats_Kk_length_hmm[,,1],  
                   iid = tables_many_repeats_Kk_length_iid[,,1])
-Tables_cov = list(hmm = tables_many_repeats_Kk_coverage_hmm[,,1], 
-                  iid = tables_many_repeats_Kk_coverage_iid[,,1])
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), HMM = T)
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), INDEP = T)
 
 Tables_len = list(hmm = tables_many_repeats_Kk_length_hmm[,,2],  
                   iid = tables_many_repeats_Kk_length_iid[,,2])
-Tables_cov = list(hmm = tables_many_repeats_Kk_coverage_hmm[,,2], 
-                  iid = tables_many_repeats_Kk_coverage_iid[,,2])
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), HMM = T)
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), INDEP = T)
 
@@ -222,15 +216,11 @@ Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), 
 #================================================
 Tables_len = list(hmm = tables_many_repeats_Kr_length_hmm[,,1],  
                   iid = tables_many_repeats_Kr_length_iid[,,1])
-Tables_cov = list(hmm = tables_many_repeats_Kr_coverage_hmm[,,1], 
-                  iid = tables_many_repeats_Kr_coverage_iid[,,1])
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(r)), HMM = T)
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(r)), INDEP = T)
 
 Tables_len = list(hmm = tables_many_repeats_Kk_length_hmm[,,1],  
                   iid = tables_many_repeats_Kk_length_iid[,,1])
-Tables_cov = list(hmm = tables_many_repeats_Kk_coverage_hmm[,,1], 
-                  iid = tables_many_repeats_Kk_coverage_iid[,,1])
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), HMM = T)
 Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), INDEP = T)
 
@@ -240,15 +230,11 @@ Plot_CI_length(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), 
 #================================================
 Tables_len = list(hmm = tables_many_repeats_mr_length_hmm[,,'Proportional to MAF'],  
                   iid = tables_many_repeats_mr_length_iid[,,'Proportional to MAF'])
-Tables_cov = list(hmm = tables_many_repeats_mr_coverage_hmm[,,'Proportional to MAF'], 
-                  iid = tables_many_repeats_mr_coverage_iid[,,'Proportional to MAF'])
 Plot_CI_length(XLAB = expression(italic(m)), LEG_title = expression(italic(r)), HMM = T)
 Plot_CI_length(XLAB = expression(italic(m)), LEG_title = expression(italic(r)), INDEP = T)
 
 Tables_len = list(hmm = tables_many_repeats_mk_length_hmm[,,'Proportional to MAF'],  
                   iid = tables_many_repeats_mk_length_iid[,,'Proportional to MAF'])
-Tables_cov = list(hmm = tables_many_repeats_mk_coverage_hmm[,,'Proportional to MAF'], 
-                  iid = tables_many_repeats_mk_coverage_iid[,,'Proportional to MAF'])
 Plot_CI_length(XLAB = expression(italic(m)), LEG_title = expression(italic(k)), HMM = T)
 Plot_CI_length(XLAB = expression(italic(m)), LEG_title = expression(italic(k)), INDEP = T)
 
