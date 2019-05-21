@@ -115,7 +115,7 @@ for(site in names(Order$x)){
     load(sprintf('../RData/%s_mles.RData', site))
   }   
   
-  if(Vivax){
+  if(site == 'vivax'){
     z <- mle_df$rhat_iid
   } else {
     z <- mle_df$rhat_hmm
@@ -124,9 +124,9 @@ for(site in names(Order$x)){
   # z = z[z< 0.5] Explore outliers
   
   if(VIO){
-    vioplot2(z, horizontal = T, h = 0.06, 
-             at = count, side = 'right', add = T, col = cols[1],
-             own_line = NULL)
+    vioplot2(x = z, horizontal = T, h = 0.06, # Surpress line
+             at = count, side = 'right', add = T, col = cols[1], 
+             colline = NA) 
   } else {
     # Histogram instead of violin plot
     x <- hist(z, plot = F,breaks = 30)
