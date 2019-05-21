@@ -3,7 +3,7 @@
 # Adapted from (https://gist.github.com/mbjoseph/5852613)
 #================================================================
 vioplot2 <- function (x, ..., range = 1.5, h = NULL, ylim = NULL, names = NULL, own_line = NULL, 
-                      horizontal = FALSE, col = "magenta", border = "black", lty = 1, 
+                      horizontal = FALSE, col = "magenta", border = "black", lty = 1, colline = 'black', 
                       lwd = 1, rectCol = "black", colMed = "black", pchMed = NULL, 
                       at, add = FALSE, wex = 1, drawRect = T, side="both") 
 {
@@ -91,7 +91,7 @@ vioplot2 <- function (x, ..., range = 1.5, h = NULL, ylim = NULL, names = NULL, 
         #      q3[i], col = rectCol)
         # median line segment
         lines(x = c(at[i] - radj*med.dens[i],at[i],at[i] + ladj*med.dens[i]),
-              y = rep(med[i],3))
+              y = rep(med[i],3), col = colline)
       }
     }
   }
@@ -115,7 +115,7 @@ vioplot2 <- function (x, ..., range = 1.5, h = NULL, ylim = NULL, names = NULL, 
         lines(y = c(at[i] - radj*med.dens[i], 
                     at[i], 
                     at[i] + ladj*med.dens[i]),
-              x = rep(med[i],3))
+              x = rep(med[i],3), col = colline)
       }
     }
   }
