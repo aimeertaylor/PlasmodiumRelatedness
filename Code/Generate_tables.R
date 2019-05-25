@@ -1,4 +1,4 @@
-### This script creates tables using both the i.i.d model and the HMM 
+### This script creates tables using both the independence model and the HMM 
 ### (including genotyping errors and allowing multiallelic loci)
 ### 
 ### The tables show the average mean square errors (RMSEs)
@@ -22,10 +22,10 @@ sourceCpp("./hmmloglikelihood.cpp")
 registerDoParallel(cores = detectCores()-2)
 epsilon <- 0.001 # Fix epsilon throughout
 rgrid <- seq(from = 0.01, to = 0.99, length.out = 5)
-samplesizes = c(96*c(0.25, 1:5)) # add maximum sample size when working with real data
+samplesizes = c(96*c(0.25, 1:5)) # sample sizes
 set.seed(1) # for reproducibility
-nrepeats <- 1000 # number of repeats 
-kfixed <- 12 
+nrepeats <- 500 # number of repeats 
+kfixed <- 8 
 rfixed <- 0.5 
 littleks <- c(1,10,100)
 
@@ -87,7 +87,7 @@ maf <- pmin(data_$fs, 1 - data_$fs)
 hist(maf, col = 'gray', freq = F)
 curve(dbeta(x, 1.2, 20), from = 0, to = 0.5, add = TRUE, col = 'blue') 
 legend('top', fill = c('gray', 'blue'), bty = 'n',legend = c('Thai MAF','Beta(1.2, 20)'))
-
+table(data_$chrom) # Check all chromosomes present
 
 # Sample allele frequencies with probability "probs" and positions uniformally at random
 simulate_ <- function(samplesize, probs, distances = NULL){
@@ -109,10 +109,8 @@ simulate_ <- function(samplesize, probs, distances = NULL){
 }
 
 
-## First approach: repeat many MLE calculations and use empirical variance of obtained MLEs
+## Approach: repeat many MLE calculations and use empirical variance of obtained MLEs
 ## Specify array with row per samplesize, column per r, layer per fs_strategy 
-## Result should be indifferent to fs_strategy at sample size that uses all available data
-## 
 fs_strategy <- list("Proportional to MAF" = maf, 
                     "Uniformly at random" = rep(1,nSNPs))
 tables_many_repeats_m_iid <- array(dim = c(length(samplesizes), length(rgrid), length(fs_strategy)),
@@ -149,84 +147,20 @@ system.time(
     }
   }
 )
-# save(tables_many_repeats_m_iid,
-#      tables_many_repeats_m_hmm,
-#      tables_many_repeats_m_dataset,
-#      tables_many_repeats_m_thetas,
-#      file = '../RData/tables_many_repeats_m.RData' )
+save(tables_many_repeats_m_iid,
+     tables_many_repeats_m_hmm,
+     tables_many_repeats_m_dataset,
+     tables_many_repeats_m_thetas,
+     file = '../RData/tables_many_repeats_m.RData' )
 load('../RData/tables_many_repeats_m.RData')
 # show some of the results
 tables_many_repeats_m_iid[,,1]
 tables_many_repeats_m_hmm[,,1]
 
 
-
-# ## Second approach: compute asymptotic variance of MLE using lots of data 
-# ## Not JUSTIFIED
-# ## and use asymptotic approximation to get variance for different finite sample sizes
-# ## not justified when r is at the boundary (at 0 or 1)
-# 
-# large_sample_size <- 1e3
-# table_asymptotics_m_iid <- array(dim = c(length(samplesizes), length(rgrid)), dimnames = list(samplesizes, rgrid))
-# table_asymptotics_m_hmm <- table_asymptotics_m_iid
-# for (icolumn in 1:length(rgrid)){
-#   asymptvariances <- foreach(irep = 1:nrepeats, .combine = rbind) %dorng% {
-#     dataset_ <- simulate_(large_sample_size, probs = fs_strategy[[1]]) # Resample distances each time
-#     frequencies <- cbind(1-dataset_$fs, dataset_$fs)
-#     Ys_iid <- simulate_Ys_iid(frequencies, rgrid[icolumn], epsilon)
-#     Ys_hmm <- simulate_Ys_hmm(frequencies, dataset_$dt, kfixed, rgrid[icolumn], epsilon)
-#     # define log likelihood
-#     ll_iid <- function(r) loglikelihood_cpp(1, r, Ys_iid, frequencies, rep(Inf, large_sample_size), epsilon, rho = 7.4 * 10^(-7))
-#     mle_iid <- compute_rhat_iid(frequencies, Ys_iid, epsilon)
-#     # # Check cannot do because of kfixed
-#     ll_hmm <- function(k, r) loglikelihood_cpp(k, r, Ys_hmm, frequencies, dataset_$dt, epsilon, rho = 7.4 * 10^(-7))
-#     mle_hmm <- compute_rhat_hmm(frequencies, dataset_$dt, Ys_hmm, epsilon)
-#     # compute second order derivative of -log-likelihood at MLE, divided by large sample size
-#     FIM_iid <- numDeriv::hessian(function(x) -ll_iid(x), mle_iid)/large_sample_size
-#     FIM_hmm <- numDeriv::hessian(function(x) -ll_hmm(x[1], x[2]), mle_hmm)/large_sample_size
-#     var_hmm <- try(solve(FIM_hmm)) # Solve is matrix inversion
-#     if (inherits(var_hmm, "try-error")){
-#       var_hmm <- matrix(NA, 2, 2)
-#     }
-#     c(solve(FIM_iid)[1,1], var_hmm[2,2])
-#   }
-#   ## Comment: we can get NA when trying to invert the FIM
-#   ## especially when the MLE is at the boundary of the parameter space, i.e rhat = 0 or = 1.
-#   meanasymptvariances <- colMeans(asymptvariances, na.rm = TRUE)
-#   for (irow in 1:length(samplesizes)){
-#     sdrhats_iid <- sqrt(meanasymptvariances[1]/samplesizes[irow])
-#     sdrhats_hmm <- sqrt(meanasymptvariances[2]/samplesizes[irow])
-#     table_asymptotics_m_iid[irow, icolumn] <- 1.96 * sdrhats_iid * 2 # Final 2 ensure full CI width
-#     table_asymptotics_m_hmm[irow, icolumn] <- 1.96 * sdrhats_hmm * 2 # Final 2 ensure full CI width
-#   }
-# }
-# save(table_asymptotics_m_iid, table_asymptotics_m_hmm,
-#      file = '~/Dropbox/IBD_IBS/RData/tables_asymptotics_m.RData' )
-# load(file = '~/Dropbox/IBD_IBS/RData/tables_asymptotics_m.RData')
-# table_asymptotics_m_iid
-# tables_many_repeats_m_iid[,,1]
-
-# # check visually for iid case
-# par(mfrow = c(1,3))
-# for (icol in 1:3){
-#   plot(x = samplesizes, y = table_asymptotics_m_iid[,icol], type = "l", main = paste0("r = ", rgrid[icol]), ylim = c(0.1, 1))
-#   lines(x = samplesizes, y = tables_many_repeats_m_iid[,icol,1], lty = 2)
-# }
-
-# check visually for hmm
-# table_asymptotics_m_hmm
-# tables_many_repeats_m_hmm[,,1]
-# check visually for iid case
-# par(mfrow = c(1,3))
-# for (icol in 1:3){
-#   plot(x = samplesizes, y = table_asymptotics_m_hmm[,icol], type = "l", main = paste0("r = ", rgrid[icol]), ylim = c(0.1, 2))
-#   lines(x = samplesizes, y = tables_many_repeats_m_hmm[,icol,1], lty = 2)
-# }
-
-
 #====================================================
 # Different (little) ks and ms given fixed r = 0.5 
-# Use the same data set as in for aboth
+# Use the same data set as in above 
 #====================================================
 load('../RData/tables_many_repeats_m.RData')
 fs_strategy <- list("Proportional to MAF" = maf)
@@ -283,8 +217,7 @@ tables_many_repeats_K_dataset[['dts']] <- dts
 system.time(
   for(ilayer in 1:length(alphas)){
     for (irow in 1:length(Ks)){
-      # draw frequencies 'once'
-      frequencies <- simulate_fs(Ks[irow], alphas[ilayer], samplesize)
+      frequencies <- simulate_fs(Ks[irow], alphas[ilayer], samplesize) # draw frequencies 'once'
       freq_name <- sprintf('K%s_alpha:%s', Ks[irow], alphas[[ilayer]])
       tables_many_repeats_K_dataset[[freq_name]] <- frequencies
       for (icolumn in 1:length(rgrid)){
@@ -308,7 +241,6 @@ tables_many_repeats_K_hmm[,,2]
 
 #====================================================
 # Different ms and Ks given fixed r  
-# addition of 6 and 12 resulted in errors. Not sure why
 #====================================================
 alphas = c(100, 1) # High versus low entropy
 Ks = seq(2,20,4)
@@ -319,7 +251,6 @@ simulate_fs = function(K, alpha, samplesize){
   fs <- t(apply(fs, 1, function(v) (v + 1e-8)/sum(v + 1e-8)))
   return(fs)
 }
-
 
 tables_many_repeats_Km_iid <- array(dim = c(length(samplesizes), length(Ks), length(alphas)),
                                     dimnames = list(samplesizes, Ks, alphas))
