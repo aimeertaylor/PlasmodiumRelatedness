@@ -1,5 +1,4 @@
 ### This script produces tables and plots of compute time
-
 ## Set up
 rm(list = ls())
 PDF = T
@@ -86,8 +85,5 @@ if(PDF){dev.off()}
 
 # Convergence codes (inspect manually)
 convergence_iid = sapply(Comp_results, function(x) x[[2]])
-convergence_hmm = table(as.vector(sapply(Comp_results, function(x) rep(names(x[[3]]),x[[3]]))))
-
-print(convergence_hmm)
-#   six 1s: indicates that the iteration limit maxit had been reached
-#   one 10: indicates degeneracy of the Nelder–Mead simplex
+convergence_hmm = sapply(Comp_results, function(x) x[[3]])
+print(convergence_hmm) # All 0

@@ -1,6 +1,5 @@
 #====================================================
-# Plot MSE for different m and r
-# Modifications: colour by width of by 
+# Plot coverage
 #====================================================
 rm(list = ls())
 dev.off()

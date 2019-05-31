@@ -1,5 +1,4 @@
 # Generate IBS for vivas only 
-
 rm(list = ls())
 load("../RData/MS_vivax.RData")
 h_m = mean(rowSums(MS_freq^2))

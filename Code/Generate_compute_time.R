@@ -14,9 +14,11 @@ sourceCpp("./hmmloglikelihood.cpp")
 registerDoParallel(cores = detectCores()-2)
 epsilon <- 0.001 # Fix epsilon throughout
 set.seed(1) # for reproducibility
-nrepeats <- 1000 # number of repeats 
-kfixed <- 12 
+nrepeats <- 500 # number of repeats 
+kfixed <- 8
 rfixed <- 0.5 
+rinit = rfixed
+kinit = kfixed
 load('../RData/tables_many_repeats_m.RData')
 dataset_names = names(tables_many_repeats_m_dataset)
 
@@ -45,7 +47,7 @@ compute_rhat_iid_optim <- function(frequencies, Ys, epsilon){
   distances <- rep(Inf, ndata)
   ll <- function(r) loglikelihood_cpp(1, r, Ys, frequencies, distances, epsilon, rho = 7.4 * 10^(-7))
   ptm <- proc.time()
-  optimization <- optim(par = 0.5, fn = function(x) - ll(x))
+  optimization <- optim(par = rinit, fn = function(x) - ll(x))
   rhat <- optimization$par
   time = proc.time() - ptm
   names(time) = paste0('iid_optim_',names(time))
@@ -60,7 +62,7 @@ compute_rhat_hmm <- function(frequencies, distances, Ys, epsilon){
   ndata <- nrow(frequencies)
   ll <- function(k, r) loglikelihood_cpp(k, r, Ys, frequencies, distances, epsilon, rho = 7.4 * 10^(-7))
   ptm <- proc.time()
-  optimization <- optim(par = c(kfixed, 0.5), fn = function(x) - ll(x[1], x[2]))
+  optimization <- optim(par = c(kinit, rinit), fn = function(x) - ll(x[1], x[2]))
   rhat <- optimization$par
   time = proc.time() - ptm
   names(time) = paste0('hmm_',names(time))

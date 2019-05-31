@@ -15,7 +15,6 @@
 # slow decrease to high stdev for r = 0.5 (moderate reduction in sd)
 # rapid decrease to low stdev for r > 0.5 (amounting to little reduction in sd when r close to 0)
 ##########################################################
-
 rm(list = ls())
 require(plotly)
 PLOT3d <- F # Set to false to avoid plotting 3d 
@@ -278,7 +277,7 @@ lines(y = Y$x, x = X[Y$ix])
 # drawn frequencies also: yes providing 
 # r > 0.15 (ish)
 #===========================================
-load('~/Dropbox/IBD_IBS/RData/tables_many_repeats_bigK.RData') # Load fixed m results and data sets 
+load('../RData/tables_many_repeats_bigK.RData') # Load fixed m results and data sets 
 
 # Get data set names and set points
 names_datasets = names(tables_many_repeats_K_dataset)

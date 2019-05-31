@@ -29,11 +29,6 @@ kfixed <- 8
 rfixed <- 0.5 
 littleks <- c(1,10,100)
 
-## Mechanism to generate Ys given fs, r, epsilon
-simulate_Ys_iid <- function(frequencies, r, epsilon){
-  Ys <- simulate_data(frequencies, rep(Inf, nrow(frequencies)), 1, r, epsilon, rho = 7.4 * 10^(-7))
-  return(Ys)
-}
 
 ## Mechanism to generate Ys given fs, distances, k, r, epsilon
 simulate_Ys_hmm <- function(frequencies, distances, k, r, epsilon){
@@ -55,7 +50,7 @@ compute_rhat_iid <- function(frequencies, Ys, epsilon){
 compute_rhat_hmm <- function(frequencies, distances, Ys, epsilon){
   ndata <- nrow(frequencies)
   ll <- function(k, r) loglikelihood_cpp(k, r, Ys, frequencies, distances, epsilon, rho = 7.4 * 10^(-7))
-  optimization <- optim(par = c(kfixed, 0.5), fn = function(x) - ll(x[1], x[2]))
+  optimization <- optim(par = c(kfixed, rfixed), fn = function(x) - ll(x[1], x[2]))
   rhat <- optimization$par
   return(rhat)
 }

@@ -2,7 +2,6 @@
 # Script to generate CIs around a subset of 100 rhats
 # Includes var based on normal approximation (invalid at boundary)
 ##########################################################
-
 rm(list = ls())
 set.seed(1) # for reproducibility
 library(ggplot2)
@@ -17,6 +16,8 @@ epsilon <- 0.001 # Fix epsilon throughout
 CIs <- T
 nboot <- 500 
 num_CI <- 100 
+kinit = 8
+rinit = 0.5
 
 ## Mechanism to generate Ys given fs, distances, k, r, epsilon
 simulate_Ys_hmm <- function(frequencies, distances, k, r, epsilon){
@@ -28,7 +29,7 @@ simulate_Ys_hmm <- function(frequencies, distances, k, r, epsilon){
 compute_rhat_hmm <- function(frequencies, distances, Ys, epsilon){
   ndata <- nrow(frequencies)
   ll <- function(k, r) loglikelihood_cpp(k, r, Ys, frequencies, distances, epsilon, rho = 7.4 * 10^(-7))
-  optimization <- optim(par = c(50, 0.5), fn = function(x) - ll(x[1], x[2]))
+  optimization <- optim(par = c(kinit, rinit), fn = function(x) - ll(x[1], x[2]))
   rhat <- optimization$par
   return(rhat)
 }

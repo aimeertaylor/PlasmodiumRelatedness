@@ -2,7 +2,6 @@
 # Script to simulate data for the plot that shows the sensitivity of IBS
 # Need to return hs so that they can be added to the sim plot
 #######################################################################
-
 rm(list = ls())
 library(ggplot2)
 library(dplyr)
@@ -19,15 +18,16 @@ load("../RData/nsnps_nsamps.RData")
 sites = names(which(sapply(hmmInput_freqs, ncol)>MinSampleSize))
 efxd = 0.001 # Fix epsilon throughout
 rfxd = 0.5 # Data generating relatedness
-kfxd = 12 # The number of generations
+kfxd = 8 # The number of generations
 nsim = 1000 # Number of sample pairs to simulate (5000 produces smooth but need to run over night)
-
+kinit = kfxd
+rinit = rfxd
 
 ## Mechanism to compute MLE given fs, distances, Ys, epsilon
 compute_rhat_hmm <- function(frequencies, distances, Ys, epsilon){
   ndata <- nrow(frequencies)
   ll <- function(k, r) loglikelihood_cpp(k, r, Ys, frequencies, distances, epsilon, rho = 7.4 * 10^(-7))
-  optimization <- optim(par = c(50, 0.5), fn = function(x) - ll(x[1], x[2]))
+  optimization <- optim(par = c(kinit, rinit), fn = function(x) - ll(x[1], x[2]))
   rhat <- optimization$par
   return(rhat)
 }
@@ -48,11 +48,6 @@ simulate_Ys_hmm <- function(frequencies, distances, k, r, epsilon){
   return(Ys)
 }
 
-## Mechanism to generate Ys given fs, r, epsilon
-simulate_Ys_iid <- function(frequencies, r, epsilon){
-  Ys <- simulate_data(frequencies, rep(Inf, nrow(frequencies)), 1, r, epsilon, rho = 7.4 * 10^(-7))
-  return(Ys)
-}
 
 # Fixed SNPs and positions 
 num_SNPs = sapply(sites, function(x) nrow(hmmInput_freqs[[x]]))
@@ -113,6 +108,6 @@ X1 = lapply(sites, wrapper_fun, subsample = T, model = 'hmm')
 X3 = lapply(sites, wrapper_fun, subsample = F, model = 'hmm')
 names(X1) = names(X3) = sites
 Xs = list(X1, X3) 
-names(Xs) = c('HMM_80SNPs','HMM_allSNPs')
+names(Xs) = c('HMM_redSNPs','HMM_allSNPs')
 save(Xs, file = '../RData/IBS_sensitivity_sim.RData')
 

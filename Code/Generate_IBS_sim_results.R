@@ -6,7 +6,6 @@ library(doParallel)
 library(doRNG)
 registerDoParallel(cores = detectCores()-2)
 source("./simulate_data.R")
-kfixed = 500
 epsilon = 0 # For IBS simple model 
 nsim = 1000
 ms = c(24, 96, 192) 
@@ -35,7 +34,7 @@ pos_change_chrom <- 1 + which(diff(data_$chrom) != 0) # find places where chromo
 data_$dt[pos_change_chrom-1] <- Inf
 
 
-## Sample frequencies and distances
+## Sample frequencies and distances (don't need the distances)
 tables_ibs_dataset <- lapply(ms, function(m){
   distances = sample(data_$dt, m)
   frequencies = sample(data_$fs, m, prob = mafs)

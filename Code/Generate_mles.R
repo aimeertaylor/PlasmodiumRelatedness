@@ -12,7 +12,7 @@ source("./simulate_data.R")
 sourceCpp("./hmmloglikelihood.cpp")
 registerDoParallel(cores = detectCores()-2)
 epsilon <- 0.001 # Fix epsilon throughout
-kinit = 50 # To initiate numerical optimization
+kinit = 8 # To initiate numerical optimization
 rinit = 0.5 # To initiate numerical optimization
 load("../RData/hmmInput_freqs.RData") # Data 
 dataset_names <- names(hmmInput_freqs) # Dataset names
@@ -37,6 +37,7 @@ compute_rhat_hmm <- function(frequencies, distances, Ys, epsilon){
   return(rhat)
 }
 
+
 #=====================================================
 # Extract pairwise comparisons and then calculate MLEs
 #=====================================================
@@ -44,7 +45,7 @@ for (idataset in 1:length(dataset_names)){
   
   data_set <- hmmInput_freqs[[dataset_names[idataset]]]
   print(paste(dataset_names[idataset], dim(data_set))) 
-  if (dim(data_set)[2] < 100){next} # Skip datasets with fewer than 100 samples
+  #if (dim(data_set)[2] < 100){next} # Skip datasets with fewer than 100 samples
   
   # Sort data by chromosome and position (in cases otherwise unsorted)
   data_set <- data_set %>% arrange(chrom, pos) 

@@ -403,7 +403,7 @@ m <- 96
 Ys <- cbind(rep(NA,m),rep(NA,m)) # No data
 for(i in 1:m){
   Ys[i,] <- sample(c(0,1), 2, replace = T, prob = frequencies[i,]) # r should converge to 0
-  print(compute_rhat_hmm(frequencies, subdata$dt, Ys, epsilon = 0.001, str_vals = c(50,0.5)))
+  compute_rhat_hmm(frequencies, subdata$dt, Ys, epsilon = 0.001, str_vals = c(50,0.5))
 }
 
 

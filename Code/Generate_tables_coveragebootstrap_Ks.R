@@ -1,7 +1,3 @@
-### This script creates tables using both the independence model and the HMM 
-### (including genotyping errors and allowing multiallelic loci)
-### for various sample size, various rs, various fs, various Ks
-
 ## Set up
 rm(list = ls()) # for reproducibility
 set.seed(1)
@@ -14,7 +10,7 @@ source("./simulate_data.R")
 sourceCpp("./hmmloglikelihood.cpp")
 registerDoParallel(cores = detectCores()-2)
 epsilon <- 0.001 # Fix epsilon throughout
-kfixed <- 12
+kfixed <- 8
 rfixed <- 0.5
 mfixed <- 24
 rvaried <- seq(from = 0.01, to = 0.99, length.out = 5)
@@ -50,7 +46,7 @@ compute_rhat_iid <- function(frequencies, Ys, epsilon){
 compute_rhat_hmm <- function(frequencies, distances, Ys, epsilon){
   ndata <- nrow(frequencies)
   ll <- function(k, r) loglikelihood_cpp(k, r, Ys, frequencies, distances, epsilon, rho = 7.4 * 10^(-7))
-  optimization <- optim(par = c(kfixed, 0.5), fn = function(x) - ll(x[1], x[2]))
+  optimization <- optim(par = c(kfixed, rfixed), fn = function(x) - ll(x[1], x[2]))
   rhat <- optimization$par
   return(rhat)
 }
@@ -74,7 +70,7 @@ Distances <- dataset_$dt
 names(Distances) <- mfixed
 
 #----------------------------------------------------------------
-# 1) Different Kt and rs given fixed m = 24 and k = 12
+# 1) Different Kt and rs given fixed m = 24 and k = 8
 #----------------------------------------------------------------
 # Save stores 
 tables_many_repeats_Kr_coverage_iid <- array(dim = c(length(Kvaried), length(rvaried), length(alphas)),
@@ -110,13 +106,13 @@ system.time(
           ci_iid <- as.numeric(quantile(rhats_iid_boot, probs = c(0.025, 0.975)))
           
           ll_hmm <- function(k, r) loglikelihood_cpp(k, r, Ys, frequencies, dataset_$dt, epsilon, rho = 7.4 * 10^(-7))
-          optimization <- optim(par = c(kfixed, 0.5), fn = function(x) - ll_hmm(x[1], x[2]))
+          optimization <- optim(par = c(kfixed, rfixed), fn = function(x) - ll_hmm(x[1], x[2]))
           rhat_hmm <- optimization$par
           rhats_hmm_boot <- rep(0, nboot)
           for (iboot in 1:nboot){
             Ys_boot <- simulate_Ys_hmm(frequencies, dataset_$dt, rhat_hmm[1], rhat_hmm[2], epsilon)
             ll_hmm <- function(k, r) loglikelihood_cpp(k, r, Ys_boot, frequencies, dataset_$dt, epsilon, rho = 7.4 * 10^(-7))
-            optimization <- optim(par = c(kfixed, 0.5), fn = function(x) - ll_hmm(x[1], x[2]))
+            optimization <- optim(par = c(kfixed, rfixed), fn = function(x) - ll_hmm(x[1], x[2]))
             rhats_hmm_boot[iboot] <- optimization$par[2]
           }
           ci_hmm <- as.numeric(quantile(rhats_hmm_boot, probs = c(0.025, 0.975)))
@@ -182,13 +178,13 @@ system.time(
           ci_iid <- as.numeric(quantile(rhats_iid_boot, probs = c(0.025, 0.975)))
           
           ll_hmm <- function(k, r) loglikelihood_cpp(k, r, Ys, frequencies, dataset_$dt, epsilon, rho = 7.4 * 10^(-7))
-          optimization <- optim(par = c(kfixed, 0.5), fn = function(x) - ll_hmm(x[1], x[2]))
+          optimization <- optim(par = c(kfixed, rfixed), fn = function(x) - ll_hmm(x[1], x[2]))
           rhat_hmm <- optimization$par
           rhats_hmm_boot <- rep(0, nboot)
           for (iboot in 1:nboot){
             Ys_boot <- simulate_Ys_hmm(frequencies, dataset_$dt, rhat_hmm[1], rhat_hmm[2], epsilon)
             ll_hmm <- function(k, r) loglikelihood_cpp(k, r, Ys_boot, frequencies, dataset_$dt, epsilon, rho = 7.4 * 10^(-7))
-            optimization <- optim(par = c(kfixed, 0.5), fn = function(x) - ll_hmm(x[1], x[2]))
+            optimization <- optim(par = c(kfixed, rfixed), fn = function(x) - ll_hmm(x[1], x[2]))
             rhats_hmm_boot[iboot] <- optimization$par[2]
           }
           ci_hmm <- as.numeric(quantile(rhats_hmm_boot, probs = c(0.025, 0.975)))

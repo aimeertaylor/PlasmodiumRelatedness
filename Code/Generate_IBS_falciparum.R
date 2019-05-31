@@ -2,7 +2,6 @@
 # Generate IBS for falciparum data sets 
 ########################################################
 rm(list = ls())
-
 load('../RData/hmmInput_freqs.RData')
 load('../RData/allele_frequencies.RData')
 load('../RData/nsnps_nsamps.RData')

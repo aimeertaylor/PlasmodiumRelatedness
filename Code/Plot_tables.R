@@ -1,4 +1,4 @@
-### This script plots tables using both the i.i.d model and the HMM 
+### This script plots tables using both the independence model and the HMM 
 ### (including genotyping errors and allowing multiallelic loci)
 ### 
 ### The tables show the Root mean squared errors (MSEs)
@@ -136,7 +136,7 @@ for(Table_ind in 1:length(Tables)){
   }
 }
 
-kable(tables_snp_requirements$`Proportional to MAF under hmm`, format = 'latex')
+kable(tables_snp_requirements$`Proportional to MAF under hmm`[,c(1,3,5)], format = 'latex')
 kable(tables_snp_requirements$`Uniformly at random under hmm`, format = 'latex')
 #save(tables_snp_requirements)
 

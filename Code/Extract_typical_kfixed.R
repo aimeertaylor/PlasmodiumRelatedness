@@ -1,5 +1,5 @@
 #====================================
-# Extracting a typical k for r=0.5 
+# Extracting a typical k for r approx. 0.5 
 # 8 based on Thai data set
 #====================================
 rm(list = ls())

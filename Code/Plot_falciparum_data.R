@@ -2,7 +2,6 @@
 # Plots of all Plasmodium data sets: 
 # makers, their frequencies and the distances between
 ########################################################
-
 rm(list = ls())
 par(mfrow = c(3,2))
 require(RColorBrewer)

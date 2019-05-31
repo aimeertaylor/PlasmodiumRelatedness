@@ -1,10 +1,10 @@
+
 rm(list = ls())
 require(RColorBrewer)
 PDF = T
 par_df <- par(no.readonly = T)
 par(par_df); par(mfrow = c(1,1), family = 'serif')
-if(PDF){pdf('../Plots/Plots_m_Keff.pdf', 
-            height = 7, width = 7)}
+if(PDF){pdf('../Plots/Plots_m_Keff.pdf', height = 7, width = 7)}
 
 #====================================================
 # K vs Keff

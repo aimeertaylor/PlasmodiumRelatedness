@@ -1,5 +1,4 @@
 # Plots containing IBS (includes sensitivity simulation)
-
 rm(list = ls())
 library(RColorBrewer)
 library(sm)
