@@ -13,7 +13,7 @@
 #====================================================
 rm(list = ls())
 dev.off()
-PLOT_pdf <- T
+JPEG <- T
 library(RColorBrewer) # For color mapper functions
 library(fields) # For image plot
 library(kableExtra) # For latex tables
@@ -27,14 +27,13 @@ green_mapper <- function(num){
 
 # Load results
 load(file = '../RData/tables_many_repeats_m.RData') 
-load(file = '../RData/tables_asymptotics_m.RData')
 load(file = '../RData/tables_many_repeats_littlek.RData') 
 load(file = '../RData/tables_many_repeats_bigk.RData') 
 
 
 # Set file for plots
-if(PLOT_pdf){pdf(file = '../Plots/Plot_tables.pdf', height = 7, width = 7)}
-
+if(JPEG){jpeg(file = '../Plots/Plot_tables%d.jpeg', 
+              height = 15, width = 15, res = 500, units = 'cm')}
 
 # ====================================================
 # Visual check that rhat are normally distributed
@@ -155,7 +154,7 @@ for(ft_strategy in c('Proportional to MAF','Uniformly at random')){
   cols <- rainbow(length(rs), end = 0.8)
   max_m <- max(ms)
   plot(NULL, 
-       ylim = c(0, pmax(max(Table), 0.35)), 
+       ylim = c(0, pmax(max(Table), 0.35)), cex.lab = 1.5, cex.main = 1.5, 
        xlim = range(ms), bty = 'n', xaxt = 'n', las = 2, 
        ylab = 'Root mean squared error', xlab = expression('Number of markers,'~italic(m)), 
        main = paste(ft_strategy, 'under', names(Tables['hmm'])))
@@ -164,7 +163,7 @@ for(ft_strategy in c('Proportional to MAF','Uniformly at random')){
     lines(y = Table[,j], x = ms, pch = 16, panel.first = grid(), type = 'b', 
           col= cols[j])
   }
-  legend('topright', bty = 'n', pch = 16, col = cols, 
+  legend('topright', bty = 'n', pch = 16, col = cols, cex = 1.2, 
          legend = format(rs, digits = 2, drop0trailing = F), 
          title = expression('Relatedness,'~italic(r)))
 }
@@ -175,8 +174,8 @@ for(ft_strategy in c('Proportional to MAF','Uniformly at random')){
 #====================================================
 # Comparing hmm to iid ('Proportional to MAF')
 #====================================================
+par(mfrow = c(1,1), family = 'serif', mar = c(5,5,2,2))
 rfixed = 0.5
-par(par_df)
 ft_strategy <- 'Proportional to MAF'
 
 # With variable r
@@ -188,19 +187,19 @@ cols <- rainbow(length(rs), end = 0.8);
 names(cols) <- rs
 plot(NULL, 
      ylim = c(0, pmax(max(max(hmm, iid),0.25))), 
-     xlim = range(ms), bty = 'n', xaxt = 'n', las = 2, 
-     ylab = 'Root mean squared error', xlab = expression('Number of markers,'~italic(m)), 
-     main = paste(ft_strategy),panel.first = grid())
+     xlim = range(ms), bty = 'n', xaxt = 'n', las = 2, cex.lab = 1.5, 
+     ylab = 'Root mean squared error', xlab = expression('Number of markers,'~italic(m)),
+     panel.first = grid())
 axis(side = 1, at = ms)
 for(r in rs){
   lines(y = hmm[,r], x = ms, pch = 16, type = 'b', col= cols[r])
   lines(y = iid[,r], x = ms, pch = 21, type = 'b', col = cols[r], bg = 'white', lty = 'dashed')
 }
 
-legend(x = 96, y = 0.25, bty = 'n', pch = 16, col = cols[rs], legend = rs, lwd = 1, 
-       title = expression('Relatedness,'~italic(r)))
-legend(x = 288, y = 0.25, bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
-       legend = c('HMM', 'Independence model'), inset = 0.2)
+legend('topright', bty = 'n', pch = 16, col = cols[rs], legend = rs, lwd = 1, 
+       title = expression('Relatedness,'~italic(r)), cex = 1.2)
+legend('right', bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
+       legend = c('HMM', 'Independence model'), inset = 0.05, cex = 1.2)
 
 
 # With variable k
@@ -212,21 +211,21 @@ cols <- rainbow(length(ks), end = 0.8);
 names(cols) <- ks
 plot(NULL, 
      ylim = c(0, pmax(max(max(hmm, iid),0.25))), 
-     xlim = range(ms), bty = 'n', xaxt = 'n', las = 2, 
+     xlim = range(ms), bty = 'n', xaxt = 'n', las = 2, cex.lab = 1.5, 
      ylab = 'Root mean squared error', xlab = expression('Number of markers,'~italic(m)), 
-     main = paste(ft_strategy),panel.first = grid())
+     panel.first = grid())
 axis(side = 1, at = ms)
 for(k in ks){
   lines(y = hmm[,k], x = ms, pch = 16, type = 'b', col= cols[k])
   lines(y = iid[,k], x = ms, pch = 21, type = 'b', col = cols[k], bg = 'white', lty = 'dashed')
 }
 
-legend(x = 96, y = 0.25, bty = 'n', pch = 16, col = cols[ks], legend = ks, lwd = 1, 
-       title = expression('Switch rate parameter,'~italic(k)))
-legend(x = 288, y = 0.25, bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
-       legend = c('HMM', 'Independence model'), inset = 0.2)
+legend('topright', bty = 'n', pch = 16, col = cols[ks], legend = ks, lwd = 1, 
+       title = expression('Switch rate parameter,'~italic(k)), cex = 1.2)
+legend('bottomright', bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
+       legend = c('HMM', 'Independence model'), inset = 0.01, cex = 1.2)
 
 
 
-if(PLOT_pdf){dev.off()}
+if(JPEG){dev.off()}
 

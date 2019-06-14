@@ -7,7 +7,8 @@ par(mfrow = c(3,2))
 require(RColorBrewer)
 require(dplyr)
 cols = brewer.pal(n = 4, name = "Dark2")
-PDF = T
+JPEG = T
+DATA = F
 min_sample_no = 0
 
 load('../RData/hmmInput_freqs.RData')
@@ -28,29 +29,30 @@ Names = c(Colombia = 'Colombia',
 #=========================================
 # Plot actual data - plot as png as large 
 #=========================================
-
-png(file = '../Plots/Data_plot.png', 
-    width = 2100, height = 3000)
-par(mfrow = c(3,2), family = 'serif', mar = c(7,5,5,2))
-for(site in sites){
-  SNPData = as.matrix(hmmInput_freqs[[site]])[,-(1:3)]
-  num_SNPs = nrow(SNPData) # Over all samples
-  min_SNPs = min(colSums(!is.na(SNPData)))
-  avg_SNPs = mean(colSums(!is.na(SNPData)))
-  order = names(sort(colMeans(is.na(SNPData))))
-  image(SNPData[,order], ylab = '', xlab = '', xaxt = 'n', yaxt = 'n', col = cols)
-  title(ylab = sprintf('Sample ID (%s samples)', ncol(SNPData)),
-        line = 1.5, 
-        main = Names[site], cex.lab = 5, cex.main = 5)
-  title(xlab = sprintf('SNP ID (SNPs analysed: total %s, min %s, mean %s)', 
-                       num_SNPs, min_SNPs, round(avg_SNPs)), cex.lab = 5, line = 3)
+if(DATA){
+  png(file = '../Plots/Data_plot.png', width = 20, height = 30, units = 'cm', res = 300)
+  par(mfrow = c(3,2), family = 'serif', mar = c(7,5,5,2))
+  for(site in sites){
+    SNPData = as.matrix(hmmInput_freqs[[site]])[,-(1:3)]
+    num_SNPs = nrow(SNPData) # Over all samples
+    min_SNPs = min(colSums(!is.na(SNPData)))
+    avg_SNPs = mean(colSums(!is.na(SNPData)))
+    order = names(sort(colMeans(is.na(SNPData))))
+    image(SNPData[,order], ylab = '', xlab = '', xaxt = 'n', yaxt = 'n', col = cols)
+    title(ylab = sprintf('Sample ID (%s samples)', ncol(SNPData)),
+          line = 1.5, 
+          main = Names[site], cex.lab = 5, cex.main = 5)
+    title(xlab = sprintf('SNP ID (SNPs analysed: total %s, min %s, mean %s)', 
+                         num_SNPs, min_SNPs, round(avg_SNPs)), cex.lab = 5, line = 3)
+  }
+  dev.off()
 }
-dev.off()
 
 
 
-if(PDF){pdf('../Plots/Plot_real_data.pdf', 
-            width = 10, height = 7)}
+if(JPEG){
+  jpeg(file = '../Plots/Data_plot%d.jpeg', res = 500, 
+       width = 20, height = 14, units = 'cm')}
 
 #=========================================
 # Plot frequencies 
@@ -58,13 +60,14 @@ if(PDF){pdf('../Plots/Plot_real_data.pdf',
 par(mfcol = c(2,3), mar = c(5,5,4,2), family = 'serif')
 for(site in sites){
   X = pmin(1-allele_frequencies[[site]], allele_frequencies[[site]])
-  hist(X, col = 'gray', breaks = 30, ylab = '', freq = T, 
+  hist(X, col = adjustcolor('green', alpha.f = '0.35'), breaks = 20, ylab = '', freq = T, 
        xlab = '', 
        xlim = c(0,0.5), panel.first= grid(), 
-       main = Names[site], 
+       main = Names[site], cex.main = 1.5, 
        las = 1)
-  title(ylab = 'Number of SNPs', line = 3)
-  title(xlab = 'Minor allele frequency estimate', line = 2)
+  box()
+  title(ylab = 'Number of SNPs', line = 3, cex.lab = 1.35)
+  title(xlab = 'Minor allele frequency estimate', line = 3, cex.lab = 1.35)
 }
 
 #=========================================
@@ -85,4 +88,4 @@ for(site in sites){
   title(ylab = 'Density', line = 3)
   title(xlab = expression(log[10]~'distance'), line = 3)
 }
-if(PDF){dev.off()}
+if(JPEG){dev.off()}

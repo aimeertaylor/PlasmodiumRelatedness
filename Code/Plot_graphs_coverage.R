@@ -5,9 +5,7 @@ rm(list = ls())
 dev.off()
 library(RColorBrewer) # For color mapper functions
 par_df <- par(no.readonly = T)
-PDF = T
-if(PDF){pdf(file = '../Plots/Plot_graphs_coverage.pdf', 
-            height = 7, width = 7)}
+JPEG = T
 cov_cutoff = 0.95
 
 # Load data 
@@ -33,14 +31,12 @@ Plot_coverage = function(XLAB, LEG_title, HMM = F, INDEP = F){
 
   # Empty plot
   plot(NULL, xlim = range(Vs), ylim = c(0.4,1), panel.first = grid(), ylog = T, 
-       xaxt = 'n', bty = 'n', xlab = XLAB, ylab = 'Coverage')
-  legend('bottomleft', lwd = 2, col = cols_vs, 
+       xaxt = 'n', bty = 'n', xlab = XLAB, ylab = 'Coverage', cex.lab = 1.5, las = 1)
+  legend('bottomleft', lwd = 2, col = cols_vs, cex = 1.2, 
          legend = format(vs, digits = 2, drop0trailing = F), 
-         bty = 'n', title = LEG_title, cex = 1, inset = 0.05)
+         bty = 'n', title = LEG_title, inset = 0.05)
   axis(side = 1, Vs)
   abline(h = cov_cutoff, lty = 5)
-  if(INDEP){Title <- "Independence model"}; if(HMM){Title <- "HMM"}
-  title(main = Title)
   
   # Plot coverage
   for(j in 1:ncol(X0)){
@@ -96,7 +92,10 @@ Plot_coverage(XLAB = expression(italic(K)), LEG_title = expression(italic(k)), I
 #================================================
 # m: summary plots (adapted for ms)
 #================================================
-par(mfrow = c(1,1))
+if(JPEG){jpeg(file = '../Plots/Plot_graphs_coverage%d.jpeg', 
+              height = 15, width = 15, res = 500, units = 'cm')}
+
+par(mfrow = c(1,1), family = 'serif',mar = c(5,5,2,2))
 Tables_cov = list(hmm = tables_many_repeats_mr_coverage_hmm[,,'Proportional to MAF'], 
                   iid = tables_many_repeats_mr_coverage_iid[,,'Proportional to MAF'])
 Vs = as.numeric(rownames(Tables_cov$iid)) # Xaxis vaiable
@@ -108,8 +107,8 @@ for(j in 1:length(vs)){
   lines(y = Tables_cov$iid[,j], x = as.numeric(rownames(Tables_cov$iid)), 
         col = cols_vs[j], ylog = T, pch = 21, type = 'b', bg = 'white', lty = 'dashed')
 }
-legend(x = 288, y = 0.5, bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
-       legend = c('HMM', 'Independence model'), inset = 0.2)
+legend('bottomright', bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
+       legend = c('HMM', 'Independence model'), inset = 0.01, cex = 1.2)
 
 
 Tables_cov = list(hmm = tables_many_repeats_mk_coverage_hmm[,,'Proportional to MAF'], 
@@ -123,10 +122,10 @@ Plot_coverage(XLAB = expression('Number of markers,'~italic(m)),
 for(j in 1:length(vs)){
   lines(y = Tables_cov$iid[,j], x = as.numeric(rownames(Tables_cov$iid)), 
         col = cols_vs[j], ylog = T, pch = 21, type = 'b', bg = 'white', lty = 'dashed')}
-legend(x = 288, y = 0.5, bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
-       legend = c('HMM', 'Independence model'), inset = 0.2)
+legend('bottomright', bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
+       legend = c('HMM', 'Independence model'), inset = 0.01, cex = 1.2)
 
-
+if(JPEG){dev.off()}
 
 
 #################################################
@@ -238,4 +237,4 @@ Plot_CI_length(XLAB = expression(italic(m)), LEG_title = expression(italic(k)), 
 Plot_CI_length(XLAB = expression(italic(m)), LEG_title = expression(italic(k)), INDEP = T)
 
 
-if(PDF){dev.off()}
+

@@ -28,19 +28,16 @@ if(!Vivax){
 }
 
 # For plotting
-cols = brewer.pal(n = 4, name = "Dark2")
+cols = rep(c(adjustcolor('lightgray'), adjustcolor('green', alpha.f = 0.35)),2)
 names(cols) = c('rhat_hmm', 'IBS', 'rhat_iid', 'IBSc')
-cols_sites = brewer.pal(n = length(sites), name = "Dark2")
-names(cols_sites) = sites
 subplot_rows = 2
 subplot_cols = length(sites) / subplot_rows
-
+ 
 # h constant and effective cardinality 
 hs = sapply(allele_frequencies, function(x){mean(x^2 + (1-x)^2, na.rm = T)})
 if(Vivax){hs = c(hs, 'vivax' = mean(rowSums(MS_freq^2)))} 
 
 if(PDF){pdf('../Plots/Plots_IBS.pdf', height = 8, width = 7)}
-
 #================================================
 # Histograms of IBSc real for the supplementary
 #================================================
@@ -56,14 +53,15 @@ for(site in sites){
   title(line = 3, xlab = expression(widehat(IBS)[m]))
   box()
 }
+if(PDF){dev.off()}
 
+if(PDF){jpeg('../Plots/Plots_IBS%d.jpeg', height = 16, width = 14, units = 'cm', res = 500)}
 #================================================
 # Violin / histogram plot of IBS and rhat real
 #================================================
 VIO = T
-cols = brewer.pal(n = 4, name = "Dark2")
 Order = sort.int(hs[sites], index.return = T)
-par(mfrow = c(2,1), pty = 'm', mar = c(4,7.5,1,1), family = 'serif')
+par(mfrow = c(2,1), pty = 'm', mar = c(3,6.85,1,1), family = 'serif')
 
 plot(NULL, xlim = c(0,1), ylim = c(1, length(sites)+1), panel.first = grid(), 
      ylab = '', xlab = '', yaxt = 'n')
@@ -160,7 +158,7 @@ for(i in 1:length(Xs)){
   X = Xs[[i]]
   Order = sort.int(sapply(X, function(x){x$h_constant}), index.return = T)
   lower = min(sapply(X, function(x){min(x$relatedness_measures[,'ibs'])}))
-  par(mfrow = c(2,1), pty = 'm', mar = c(4,7.5,1,1), family = 'serif')
+  par(mfrow = c(2,1), pty = 'm', mar = c(3,6.85,1,1), family = 'serif')
   lower = min(sapply(X, function(x){min(x$relatedness_measures[,'ibs'])}))
   sites = names(Order$x)
   

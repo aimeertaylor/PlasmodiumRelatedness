@@ -19,10 +19,10 @@ rm(list = ls())
 require(plotly)
 PLOT3d <- F # Set to false to avoid plotting 3d 
 PLOThm <- F # Set to false to avoid plotting heat maps
-PDF <- T # Set to false to print to screen 
+JPEG <- T # Set to false to print to screen 
 
-if(PDF){pdf(file = '../Plots/Plot_FIM_K_eff.pdf', 
-            height = 10, width = 10)}
+if(JPEG){jpeg(file = '../Plots/Plot_FIM_K_eff%d.jpeg', res = 500, 
+            height = 20, width = 20, units = 'cm')}
 
 FIM_K <- function(x, r){ # Function to calculate FIM assuming equifrequent Fs
   1/(1-r) + (x-1)^2/(x*(1+(x-1)*r)) - 1/(x*(1-r))}
@@ -203,26 +203,31 @@ GAIN = lapply(FIMs, function(X){
   X/X2  
 })
 
-par(mfrow = c(1,2), mar = c(5.1,5.1,4.1,2.1))
-plot(NULL, ylim = c(0,7), xlim = c(1, max(1/h1s)), las = 1, panel.first = grid(), 
-     ylab = expression('Multiplicative increase in informativeness, i.e.'~FIM[italic(t)](italic(K)[t]~"'")%/%FIM[italic(t)](italic(K)[t]~"'" == 2)), 
+par(mfrow = c(1,2), mar = c(5,2,2,0.5), oma = c(0,2,0,0))
+plot(NULL, ylim = c(0,7), xlim = c(1, max(1/h1s)), las = 1, panel.first = grid(), ylab = '', 
      xlab = expression('Effective marker cardinality,'~italic(K)[t]~"'"), 
-     main = 'Equifrequent alleles')
+     main = 'Equifrequent alleles', cex.lab = 1.2, cex.main = 1.5)
+
+# Outer label
+title(ylab = expression('Multiplicative increase in informativeness:'~FIM[italic(t)](italic(K)[t]~"'"~','~italic(r))%/%FIM[italic(t)](italic(K)[t]~"'" == 2~','~italic(r))), 
+      cex.lab = 1.2, outer = T, line = 0, adj = 0.7)
+
 for(r in rs){
   Y = GAIN[[as.character(r)]]; COL = cols_rs[as.character(r)]
   points(y = Y['feq',], x = 1/h1s['feq',], pch = 16, col = COL, cex = 0.75)
   lines(y = Y['feq',], x = 1/h1s['feq',], col = COL, lwd = 0.75)
 }
-legend('topleft', inset = 0.1, col = cols_rs, title = expression(italic(r)), 
+legend('topleft', inset = 0.01, col = cols_rs, title = expression(italic(r)), 
        legend = round(rs, 2), lwd = 2, bty = 'n')
-legend('bottomright', inset = 0.1, pch = 19,
+legend('bottomright', inset = 0.1, pch = 19, cex = 1.2, 
        legend = expression(italic(K)[t]~"'"== italic(K)[t]), lwd = 2, bty = 'n')
 
 # For K eff
-plot(NULL, ylim = c(0,7), xlim = c(1, max(1/h1s)), las = 1, panel.first = grid(), 
-     ylab = expression('Multiplicative increase in informativeness, i.e.'~FIM[italic(t)](italic(K)[t]~"'")%/%FIM[italic(t)](italic(K)[t]~"'" == 2)), 
-     xlab = expression('Effective marker cardinality,'~italic(K)[t]~"'"), 
-     main = 'Non-equifrequent alleles')
+par(mar = c(5,0.5,2,2))
+plot(NULL, ylim = c(0,7), xlim = c(1, max(1/h1s)), las = 1, panel.first = grid(), ylab = '', 
+     xlab = expression('Effective marker cardinality,'~italic(K)[t]~"'"), yaxt = 'n', 
+     main = 'Non-equifrequent alleles',cex.lab = 1.2, cex.main = 1.5)
+
 for(r in rs){
   Y = GAIN[[as.character(r)]]; COL = cols_rs[as.character(r)]
   points(y = Y['feq',], x = 1/h1s['feq',], pch = 16, col = COL, cex = 0.75)
@@ -233,9 +238,9 @@ for(r in rs){
   X = sort.int(X, index.return = T)
   lines(y = Y[X$ix], x = X$x, col = COL, lwd = 0.75)
 }
-legend('bottomright', inset = 0.1, pch = c(19,17), 
+legend('bottomright', inset = 0.1, pch = c(19,17), cex = 1.2, 
        legend = c(expression(italic(K)[t]~"'"== italic(K)[t]),
-                  expression(italic(K)[t]~"'"<italic(K)[t])), cex = 1, lwd = 2, bty = 'n')
+                  expression(italic(K)[t]~"'"<italic(K)[t])), lwd = 2, bty = 'n')
 
 
 
@@ -343,7 +348,7 @@ for(i in 1:length(Ylabs)){
   title(ylab = Ylabs[i], xlab = Xlab, line = 1.85)
 }
 
-if(PDF){dev.off()}
+if(JPEG){dev.off()}
 
 
 

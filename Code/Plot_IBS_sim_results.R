@@ -20,14 +20,14 @@ for(m in ms){
   for(r in rs){
     Z = tables_ibs[[m]][[r]]$ibs 
     hist(Z, las = 1, panel.first = grid(), freq = F, 
-         col = 'gray', xlim = c(0,1), 
+         col = 'gray', xlim = c(0,1), cex.lab = 1.2, 
          cex.axis = 0.75, xlab = bquote(widehat(IBS)[italic(m) == .(as.numeric(m))]),
          main = '', ylab = '')
-    title(ylab = 'Density', line = 2)
-    title(main = bquote(italic(r)==.(as.numeric(r))), line = 0)
+    title(ylab = 'Density', line = 2, cex = 1.2)
+    title(main = bquote(italic(r)==.(as.numeric(r))), line = 0, cex = 1.2)
     expectation = h_constant + (1-h_constant)*as.numeric(r)
     abline(v = expectation, lwd = 2, col = 'green')
-    legend('topleft', fill = c('green'), cex = 0.75, inset = 0.075,
+    legend('topleft', fill = c('green'), cex = 0.95, inset = 0.08,
            legend = bquote(italic(bar(h)[m])+(1-italic(bar(h)[m]))*italic(r) == .(round(expectation,2))))
   }
 }
@@ -57,13 +57,13 @@ cols = brewer.pal(length(hs), 'Spectral')
 names(cols) = hs
 X = seq(0,1,0.01)
 plot(y = (X-hs[1])/(1-hs[1]), x = X, type = 'l', panel.first = grid(),  
-     ylim = c(-.2,1), xaxt = 'n', 
+     ylim = c(-.2,1), xaxt = 'n', cex.lab = 1.2, 
      ylab = expression(widehat(IBS)[m]^(c)), bty = 'n', 
      xlab = expression(widehat(IBS)[m]), main = '', col  = cols[as.character(hs[1])])
 for(h in hs[-1]){
   lines(y = (X-h)/(1-h), x = X, col = cols[as.character(h)])
 }
-legend('left', title = expression(italic(bar(h)[m])), 
+legend('left', title = expression(italic(bar(h)[m])), cex = 1.2, 
        legend = format(hs, digits = 2, drop0trailing = F), col = cols, lwd = 2, bty = 'n')
 axis(side = 1, at = seq(0,1,0.25), pos = c(0,0))
 

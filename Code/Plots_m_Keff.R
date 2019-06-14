@@ -1,10 +1,10 @@
 
 rm(list = ls())
 require(RColorBrewer)
-PDF = T
+JPEG=T
 par_df <- par(no.readonly = T)
 par(par_df); par(mfrow = c(1,1), family = 'serif')
-if(PDF){pdf('../Plots/Plots_m_Keff.pdf', height = 7, width = 7)}
+if(JPEG){jpeg('../Plots/Plots_m_Keff%d.jpeg', height = 18, width = 18, res = 500, units = 'cm')}
 
 #====================================================
 # K vs Keff
@@ -52,7 +52,7 @@ for(i in 1:2){
 #====================================================
 # m vs Keff
 #====================================================
-par(mfrow = c(1,1), mar = c(5,4,1,1))
+par(mfrow = c(1,1), mar = c(5,5,1,1))
 # Since the number of markers has no bearing, we first take an average over m 
 newcols <- array(NA, dim = c(length(Ks),2), dimnames = list(Ks,NULL))
 for(K in as.character(Ks)){
@@ -76,16 +76,16 @@ cols <- rainbow(length(Z), end = 0.8)
 names(cols) <- Z
 
 # HMM
-plot(NULL, bty = 'n', 
+plot(NULL, bty = 'n', cex.lab = 1.5, 
      ylim = c(0.05, pmax(max(tablebothsorted), 0.25)),
      xlim = range(ms), xaxt = 'n', panel.first = grid(),
      ylab = expression('Root mean squared error given data generating'~italic(r)==0.5), 
-     main = '', las = 2,
+     main = '', las = 2, cex.lab = 1.5, 
      xlab = expression('Number of markers,'~italic(m)))
 axis(side = 1, at = ms)
 abline(h = 0.1, lty = 'dashed')
 
-legend(y = 0.222, x = 384, 
+legend(y = 0.222, x = 384, cex = 1.2, 
        inset = 0, legend = format(Z, digits = 2, drop0trailing = F), 
        col = cols,
        pch = 16, bty = 'n', title = expression(bar(italic(K))~"'"[italic(m)[cum]]))
@@ -126,11 +126,12 @@ symbols(y = Y, x = X, las = 1,
         ylim = c(0.05, pmax(max(tablebothsorted), 0.25)), 
         xlab = expression('Number of markers times average effective cardinality, '~italic(m)%*%bar(italic(K))~"'"[italic(m)[cum]]), 
         ylab = expression('Root mean squared error given data generating'~italic(r)==0.5), 
+        cex.lab = 1.5, 
         bty ='n', panel.first = grid(), 
         bg = cols[names(Keff_ms[names_order_vector])])
 fit = loess(Y_sort ~ X_sort$x, span=0.20)
 #lines(y = predict(fit), x = X_sort$x)
-legend(y = 0.222, 
+legend(y = 0.222, cex = 1.2, 
        x = 6418,
        fill = cols[seq(1,length(Keff_ms),length.out = 10)], bty = 'n', 
        title = expression(bar(italic(K))~"'"[italic(m)[cum]]), 
@@ -140,12 +141,12 @@ symbols(y = seq(0.206, 0.145, length.out = length(ms)),
         x = rep(max(X),length(ms)), bg = 'lightgray', 
         circles = sqrt(ms/pi), 
         add = T, inches = 0.155) # Area scales with m
-text(y = seq(0.206, 0.145, length.out = length(ms)),
+text(y = seq(0.206, 0.145, length.out = length(ms)),cex = 1.2,
      x = rep(max(X),length(ms)),labels = ms, pos = 4, offset = 1.1)
-text(y = max(Y)+0.005, pos = 4, x = max(X), labels = expression(italic(m)))
+text(y = 0.206+0.01, pos = 4, x = max(X), labels = expression(italic(m)), cex = 1.2)
 abline(h = 0.1, lty = 'dashed')
 
-if(PDF){dev.off()}
+if(JPEG){dev.off()}
 
 
 

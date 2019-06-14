@@ -54,7 +54,7 @@ cols_rs = rainbow(length(ks), end = 0.8);names(cols_rs) = rs
 #=====================================================
 Input_sensitivity_rxtreme = list()
 
-for(site in sites){
+for(site in 'Colombia'){
   
   # Get data for plugging into the liklihood function 
   subdata <- hmmInput_freqs[[site]]
@@ -148,7 +148,7 @@ for(site in sites){
 #=====================================================
 Input_sensitivity_kxtreme = list()
 
-for(site in sites[1:5]){
+for(site in 'Colombia'){
   
   # Get data for plugging into the liklihood function 
   subdata <- hmmInput_freqs[[site]]
@@ -233,6 +233,7 @@ for(site in sites[1:5]){
                                            r_input_sensitivity = r_input_sensitivity)
 }
 if(PLOT){dev.off()}
+
 
 #========================================================
 # Summarise sensitivity to starting values
