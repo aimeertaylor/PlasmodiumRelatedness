@@ -157,14 +157,14 @@ for(ft_strategy in c('Proportional to MAF','Uniformly at random')){
        ylim = c(0, pmax(max(Table), 0.35)), cex.lab = 1.5, cex.main = 1.5, 
        xlim = range(ms), bty = 'n', xaxt = 'n', las = 2, 
        ylab = 'Root mean squared error', xlab = expression('Number of markers,'~italic(m)), 
-       main = paste(ft_strategy, 'under', names(Tables['hmm'])))
+       main = paste(ft_strategy, 'under', toupper(names(Tables['hmm']))))
   axis(side = 1, at = ms)
   for(j in 1:ncol(Table)){
     lines(y = Table[,j], x = ms, pch = 16, panel.first = grid(), type = 'b', 
           col= cols[j])
   }
   legend('topright', bty = 'n', pch = 16, col = cols, cex = 1.2, 
-         legend = format(rs, digits = 2, drop0trailing = F), 
+         legend = format(rs, digits = 3, drop0trailing = F), 
          title = expression('Relatedness,'~italic(r)))
 }
 
@@ -196,7 +196,8 @@ for(r in rs){
   lines(y = iid[,r], x = ms, pch = 21, type = 'b', col = cols[r], bg = 'white', lty = 'dashed')
 }
 
-legend('topright', bty = 'n', pch = 16, col = cols[rs], legend = rs, lwd = 1, 
+legend('topright', bty = 'n', pch = 16, col = cols[rs], 
+       legend = format(as.numeric(rs), digits = 3, drop0trailing = F), lwd = 1, 
        title = expression('Relatedness,'~italic(r)), cex = 1.2)
 legend('right', bty = 'n', lty = 1:2, pch = c(16,21), col = 'black', pt.bg = 'white', 
        legend = c('HMM', 'Independence model'), inset = 0.05, cex = 1.2)

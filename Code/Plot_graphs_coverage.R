@@ -33,7 +33,7 @@ Plot_coverage = function(XLAB, LEG_title, HMM = F, INDEP = F){
   plot(NULL, xlim = range(Vs), ylim = c(0.4,1), panel.first = grid(), ylog = T, 
        xaxt = 'n', bty = 'n', xlab = XLAB, ylab = 'Coverage', cex.lab = 1.5, las = 1)
   legend('bottomleft', lwd = 2, col = cols_vs, cex = 1.2, 
-         legend = format(vs, digits = 2, drop0trailing = F), 
+         legend = format(vs, digits = 3, drop0trailing = F), 
          bty = 'n', title = LEG_title, inset = 0.05)
   axis(side = 1, Vs)
   abline(h = cov_cutoff, lty = 5)

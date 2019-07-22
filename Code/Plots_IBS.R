@@ -50,7 +50,7 @@ for(site in sites){
        main = Names[site], 
        xlab = '', panel.first = grid(), 
        ylab = 'Density')
-  title(line = 3, xlab = expression(widehat(IBS)[m]))
+  title(line = 3, xlab = expression(widehat(IBS)[m]^(c)))
   box()
 }
 if(PDF){dev.off()}
