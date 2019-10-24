@@ -1,2 +1,6 @@
 **/.DS_Store
 **/.Rhistory
+
+# Ignore scipts written for special requests
+**/*_KeystoneMeeting2019.*
+
