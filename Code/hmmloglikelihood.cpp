@@ -7,6 +7,17 @@ using namespace Rcpp;
 /* This function computes the log-likelihood 
  * associated with a hidden Markov model. ******* USE AT YOUR OWN RISK!
  * 
+ * Do not use this function with Ys that have NA values: it does not deal
+ * correctly with NA values in the Ys, or return a warning if there are NAs in
+ * the Ys. More specifically, when one or both observed genotypes is/are NA at a
+ * locus the observed genotype cannot be equal to the unobserved true genotype
+ * such that the all four if statements, if (Ys(idata,0) == g), will by FALSE
+ * resulting in the addition of r*epsilon^2 + (1-r)*epsilon2 = epsilon^2 terms
+ * to the log likelihood. NB, when r is close to either zero or one, the
+ * r*epsilon^2 or (1-r)*epsilon2 terms, respectively, are liable to be rounded
+ * to zero (underflow) resulting in  r*epsilon^2 + (1-r)*epsilon2 not exactly
+ * equal to epsilon^2.
+ * 
  * The hidden variables (IBD_t) are a Markov chain in {0,1},
  * where the index refers to a site on the genome.
  * The initial probabilities are (1 - r, r), i.e IBD_1 = 1 with probability r.
