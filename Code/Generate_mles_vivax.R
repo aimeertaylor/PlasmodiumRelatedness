@@ -1,5 +1,6 @@
 # This script is adapted for IBD/IBS from the original script saved in the vivax project  
 # It currently includes the method for formating the data, generating mles and CIs as well
+
 rm(list = ls())
 library(ggplot2)
 library(dplyr)
